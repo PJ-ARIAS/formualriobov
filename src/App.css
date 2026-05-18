@@ -1,29 +1,5 @@
-@custom-variant dark (&:is(.dark *));
 @import "tailwindcss";
-@theme inline {
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-background: oklch(0.99 0.005 90);
-  --color-foreground: oklch(0.15 0.02 280);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.15 0.02 280);
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.15 0.02 280);
-  --color-primary: oklch(0.55 0.22 330);
-  --color-primary-foreground: oklch(0.99 0 0);
-  --color-secondary: oklch(0.96 0.01 90);
-  --color-secondary-foreground: oklch(0.25 0.02 280);
-  --color-muted: oklch(0.94 0.01 90);
-  --color-muted-foreground: oklch(0.45 0.02 280);
-  --color-accent: oklch(0.7 0.18 45);
-  --color-accent-foreground: oklch(0.15 0 0);
-  --color-destructive: oklch(0.577 0.245 27.325);
-  --color-destructive-foreground: oklch(0.99 0 0);
-  --color-border: oklch(0.9 0.01 90);
-  --color-input: oklch(0.92 0.01 90);
-  --color-ring: oklch(0.55 0.22 330);
-  --radius: 0.75rem;
-}
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --background: #f5ede0;

@@ -106,25 +106,25 @@ export function Formulario() {
     <section id="contact" className="py-24 bg-card">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="text-primary font-bold text-sm uppercase tracking-[0.3em]">
+          <span className="text-muted font-bold text-sm uppercase tracking-[0.3em]">
             Booking
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-foreground mt-2 mb-4 uppercase italic">
             Request Your Package
           </h2>
           <p className="text-muted-foreground italic">
-            Personalize your Valencia experience with our local LGBTQ+ hosts
+            Book now for your experience
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-card-foreground/50 rounded-[40px] p-8 md:p-12 border border-muted shadow-2xl"
+          className="bg-card rounded-[40px] p-8 md:p-12 border border-muted shadow-2xl"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {/* --- COLUMNA 1: Personal Information --- */}
             <div className="space-y-4">
-              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-primary">
+              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
                 1. Personal Info
               </h3>
               <div>
@@ -169,7 +169,7 @@ export function Formulario() {
 
             {/* --- COLUMNA 2: Trip Details --- */}
             <div className="space-y-4">
-              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-primary">
+              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
                 2. Trip Details
               </h3>
               <div>
@@ -240,7 +240,7 @@ export function Formulario() {
           <div className="mb-8 p-6 bg-background/50 rounded-3xl border border-muted/50">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <div>
-                <Label className="text-foreground block font-black text-xl uppercase italic">
+                <Label className="text-muted block font-black text-xl uppercase italic">
                   3. Select Experiences
                 </Label>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -252,8 +252,8 @@ export function Formulario() {
                   className={cn(
                     "text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full transition-colors",
                     selectedExperiences.length === currentLimit
-                      ? "bg-primary text-white"
-                      : "bg-primary/10 text-primary",
+                      ? "bg-muted text-white"
+                      : "bg-muted/10 text-muted",
                   )}
                 >
                   {selectedExperiences.length} / {currentLimit} Selected
@@ -262,7 +262,7 @@ export function Formulario() {
             </div>
 
             {!selectedPackage && (
-              <div className="flex items-center gap-2 p-4 bg-primary/5 text-primary rounded-xl mb-4 text-sm font-medium border border-primary/10">
+              <div className="flex items-center gap-2 p-4 bg-primary/5 text-muted rounded-xl mb-4 text-sm font-medium border border-primary/10">
                 <AlertCircle size={18} />
                 Please select a package first to unlock the experiences.
               </div>
