@@ -1,10 +1,10 @@
-import { Formulario } from "./components/formulario";
+import { RegistrationForm } from "./components/formulario";
 import "./index.css";
 function App() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <main>
-        <Formulario />
+        <RegistrationForm />
       </main>
     </div>
   );

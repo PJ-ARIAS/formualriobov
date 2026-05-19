@@ -1,5 +1,7 @@
 "use client";
+
 import { useState } from "react";
+import emailjs from "@emailjs/browser"; // Importación de EmailJS
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -12,11 +14,11 @@ import {
 } from "./ui/select";
 import { Send, Check, AlertCircle } from "lucide-react";
 import { cn } from "../../lib/utils";
-// IMPORTANTE: Ajusta la ruta a tu archivo de analítica
 import { trackGA4Event } from "../../utils/analytics";
 
-export function Formulario() {
+export function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Estado para evitar múltiples envíos
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string>("");
 
@@ -42,7 +44,6 @@ export function Formulario() {
 
   const handleToggle = (exp: string) => {
     if (!selectedPackage) return;
-
     setSelectedExperiences((prev) => {
       const isSelected = prev.includes(exp);
       if (isSelected) return prev.filter((e) => e !== exp);
@@ -53,47 +54,82 @@ export function Formulario() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // --- INTEGRACIÓN TRACKER DE ANALITICA ---
-    trackGA4Event("generate_lead_gay_games", {
-      package_type: selectedPackage,
-      experience_count: selectedExperiences.length,
+    // 1. Recopilar datos del formulario
+    const formData = new FormData(e.currentTarget);
+
+    // 2. Parámetros para EmailJS
+    const templateParams = {
+      from_name: formData.get("name"),
+      reply_to: formData.get("email"), // IMPORTANTE: Para que funcione el Auto-Reply
+      phone: formData.get("phone"),
+      country: formData.get("country"),
+      package: selectedPackage.toUpperCase(),
       experiences: selectedExperiences.join(", "),
-      location: "registration_form_footer",
-    });
+      arrival_date: formData.get("arrival"),
+      travelers: formData.get("travelers"),
+      accommodation: formData.get("accommodation"),
+      message: formData.get("message") || "No additional comments",
+    };
 
-    // Envío de conversión a Google Ads (Opcional pero recomendado)
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "conversion", {
-        send_to: "AW-16594563469",
-        value: 1.0,
-        currency: "EUR",
+    try {
+      // 3. Envío vía EmailJS (Esto dispara el template principal y el Auto-Reply configurado)
+      await emailjs.send(
+        "service_x2xiuku", // SERVICE ID
+        "template_cr8bpcb", //TEMPLATE ID PRINCIPAL
+        templateParams,
+        "0D2_RTpDkgCusGQIy", //PUBLIC KEY
+      );
+
+      // 4. TRACKING GA4
+      trackGA4Event("generate_lead_gay_games", {
+        package_type: selectedPackage,
+        experience_count: selectedExperiences.length,
+        experiences: selectedExperiences.join(", "),
+        location: "registration_form_footer",
       });
-    }
 
-    setIsSubmitted(true);
+      // 5. TRACKING GOOGLE ADS
+      if (typeof window !== "undefined" && (window as any).gtag) {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-16594563469",
+          value: 1.0,
+          currency: "EUR",
+        });
+      }
+
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+      alert("Something went wrong. Please try again or contact us directly.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (isSubmitted) {
     return (
       <section className="py-24 text-center animate-in fade-in zoom-in duration-500">
         <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
-          <Check className="w-10 h-10 text-muted" />
+          <Check className="w-10 h-10 text-primary" />
         </div>
         <h2 className="text-3xl font-black uppercase italic mb-4">
           Thank you!
         </h2>
-        <p className="text-muted-foreground max-w-md mx-auto italic">
+        <p className="text-muted-foreground max-w-md mx-auto italic text-pretty">
           Your request for{" "}
-          <strong>Package {selectedPackage.toUpperCase()}</strong> has been
-          sent. Our local team will contact you shortly to finalize your
-          Mediterranean experience.
+          <strong className="text-foreground">
+            Package {selectedPackage.toUpperCase()}
+          </strong>{" "}
+          has been sent. Our local team will contact you shortly to finalize
+          your Mediterranean experience.
         </p>
         <Button
           variant="outline"
-          className="mt-8 rounded-full"
+          className="mt-8 rounded-full px-8"
           onClick={() => (window.location.href = "/")}
         >
           Back to Home
@@ -106,31 +142,32 @@ export function Formulario() {
     <section id="contact" className="py-24 bg-card">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="text-muted font-bold text-sm uppercase tracking-[0.3em]">
+          <span className="text-primary font-bold text-sm uppercase tracking-[0.3em]">
             Booking
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-foreground mt-2 mb-4 uppercase italic">
             Request Your Package
           </h2>
           <p className="text-muted-foreground italic">
-            Book now for your experience
+            Personalize your Valencia experience with our local LGBTQ+ hosts
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-card rounded-[40px] p-8 md:p-12 border border-muted shadow-2xl"
+          className="bg-card-foreground/50 rounded-[40px] p-8 md:p-12 border border-muted shadow-2xl"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            {/* --- COLUMNA 1: Personal Information --- */}
+            {/* --- 1. Personal Info --- */}
             <div className="space-y-4">
-              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
+              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-primary">
                 1. Personal Info
               </h3>
               <div>
                 <Label htmlFor="name">Full Name *</Label>
                 <Input
                   id="name"
+                  name="name"
                   required
                   placeholder="John Doe"
                   className="mt-1.5 bg-card rounded-xl"
@@ -140,6 +177,7 @@ export function Formulario() {
                 <Label htmlFor="email">Email *</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   required
                   placeholder="john@example.com"
@@ -150,6 +188,7 @@ export function Formulario() {
                 <Label htmlFor="phone">WhatsApp / Phone *</Label>
                 <Input
                   id="phone"
+                  name="phone"
                   type="tel"
                   required
                   placeholder="+34 000 000 000"
@@ -160,6 +199,7 @@ export function Formulario() {
                 <Label htmlFor="country">Country *</Label>
                 <Input
                   id="country"
+                  name="country"
                   required
                   placeholder="Your country"
                   className="mt-1.5 bg-card rounded-xl"
@@ -167,14 +207,15 @@ export function Formulario() {
               </div>
             </div>
 
-            {/* --- COLUMNA 2: Trip Details --- */}
+            {/* --- 2. Trip Details --- */}
             <div className="space-y-4">
-              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
+              <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-primary">
                 2. Trip Details
               </h3>
               <div>
                 <Label>Preferred Package *</Label>
                 <Select
+                  name="package_selection"
                   required
                   onValueChange={(value) => {
                     setSelectedPackage(value);
@@ -199,7 +240,7 @@ export function Formulario() {
               </div>
               <div>
                 <Label>Number of Travelers *</Label>
-                <Select required>
+                <Select name="travelers" required>
                   <SelectTrigger className="mt-1.5 bg-card rounded-xl">
                     <SelectValue placeholder="How many people?" />
                   </SelectTrigger>
@@ -214,7 +255,7 @@ export function Formulario() {
               </div>
               <div>
                 <Label>Need Accommodation? *</Label>
-                <Select required>
+                <Select name="accommodation" required>
                   <SelectTrigger className="mt-1.5 bg-card rounded-xl">
                     <SelectValue placeholder="Select option" />
                   </SelectTrigger>
@@ -228,6 +269,7 @@ export function Formulario() {
                 <Label htmlFor="arrival">Arrival Date *</Label>
                 <Input
                   id="arrival"
+                  name="arrival"
                   type="date"
                   required
                   className="mt-1.5 bg-card rounded-xl"
@@ -236,24 +278,19 @@ export function Formulario() {
             </div>
           </div>
 
-          {/* --- EXPERIENCIAS --- */}
+          {/* --- 3. Experiences --- */}
           <div className="mb-8 p-6 bg-background/50 rounded-3xl border border-muted/50">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-              <div>
-                <Label className="text-muted block font-black text-xl uppercase italic">
-                  3. Select Experiences
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Based on your selected package
-                </p>
-              </div>
+              <Label className="text-foreground block font-black text-xl uppercase italic">
+                3. Select Experiences
+              </Label>
               {selectedPackage && (
                 <span
                   className={cn(
                     "text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full transition-colors",
                     selectedExperiences.length === currentLimit
-                      ? "bg-muted text-white"
-                      : "bg-muted/10 text-muted",
+                      ? "bg-primary text-white"
+                      : "bg-primary/10 text-primary",
                   )}
                 >
                   {selectedExperiences.length} / {currentLimit} Selected
@@ -262,7 +299,7 @@ export function Formulario() {
             </div>
 
             {!selectedPackage && (
-              <div className="flex items-center gap-2 p-4 bg-primary/5 text-muted rounded-xl mb-4 text-sm font-medium border border-primary/10">
+              <div className="flex items-center gap-2 p-4 bg-primary/5 text-primary rounded-xl mb-4 text-sm font-medium border border-primary/10">
                 <AlertCircle size={18} />
                 Please select a package first to unlock the experiences.
               </div>
@@ -273,7 +310,6 @@ export function Formulario() {
                 const isSelected = selectedExperiences.includes(exp);
                 const isMaxed =
                   selectedExperiences.length >= currentLimit && !isSelected;
-
                 return (
                   <div
                     key={exp}
@@ -322,6 +358,7 @@ export function Formulario() {
             <Label htmlFor="message">Additional Comments (Optional)</Label>
             <textarea
               id="message"
+              name="message"
               rows={4}
               placeholder="Any special requests or dietary requirements?"
               className="mt-1.5 w-full px-4 py-3 bg-card border border-muted rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all"
@@ -331,11 +368,16 @@ export function Formulario() {
           <Button
             type="submit"
             size="lg"
-            disabled={selectedExperiences.length === 0}
+            disabled={selectedExperiences.length === 0 || isLoading}
             className="w-full bg-primary hover:bg-zinc-900 text-white font-black uppercase italic tracking-widest py-8 rounded-full shadow-xl shadow-primary/20 disabled:opacity-30 transition-all"
           >
-            <Send className="w-5 h-5 mr-2" />
-            Request Custom Itinerary
+            {isLoading ? (
+              "Sending..."
+            ) : (
+              <>
+                <Send className="w-5 h-5 mr-2" /> Request Custom Itinerary
+              </>
+            )}
           </Button>
         </form>
       </div>
