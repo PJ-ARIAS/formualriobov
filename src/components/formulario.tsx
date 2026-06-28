@@ -5,14 +5,14 @@ import emailjs from "@emailjs/browser";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Send, Check, AlertCircle } from "lucide-react";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "./ui/select";
+import { Send, Check } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { trackGA4Event } from "../../utils/analytics";
 
@@ -20,7 +20,7 @@ export function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Estado para evitar múltiples envíos
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>([]);
-  const [selectedPackage, setSelectedPackage] = useState<string>("");
+  // const [selectedPackage, setSelectedPackage] = useState<string>("");
 
   const experiences = [
     "Valencia Historic & Lifestyle Tour",
@@ -34,25 +34,31 @@ export function RegistrationForm() {
     "Premium Xàbia Mediterranean Escape",
   ];
 
-  const packageLimits: Record<string, number> = {
-    a: 3,
-    b: 4,
-    c: 5,
-  };
-
-  const currentLimit = packageLimits[selectedPackage] || 0;
-
   const handleToggle = (exp: string) => {
-    if (!selectedPackage) return;
-    setSelectedExperiences((prev) => {
-      const isSelected = prev.includes(exp);
-      if (isSelected) return prev.filter((e) => e !== exp);
-      if (prev.length < currentLimit) {
-        return [...prev, exp];
-      }
-      return prev;
-    });
+    setSelectedExperiences((prev) =>
+      prev.includes(exp) ? prev.filter((e) => e !== exp) : [...prev, exp],
+    );
   };
+
+  // const packageLimits: Record<string, number> = {
+  //   a: 3,
+  //   b: 4,
+  //   c: 5,
+  // };
+
+  // const currentLimit = packageLimits[selectedPackage] || 0;
+
+  // const handleToggle = (exp: string) => {
+  //   if (!selectedPackage) return;
+  //   setSelectedExperiences((prev) => {
+  //     const isSelected = prev.includes(exp);
+  //     if (isSelected) return prev.filter((e) => e !== exp);
+  //     if (prev.length < currentLimit) {
+  //       return [...prev, exp];
+  //     }
+  //     return prev;
+  //   });
+  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -67,7 +73,7 @@ export function RegistrationForm() {
       reply_to: formData.get("email"), // IMPORTANTE: Para que funcione el Auto-Reply
       phone: formData.get("phone"),
       country: formData.get("country"),
-      package: selectedPackage.toUpperCase(),
+      // package: selectedPackage.toUpperCase(),
       experiences: selectedExperiences.join(", "),
       arrival_date: formData.get("arrival"),
       travelers: formData.get("travelers"),
@@ -86,7 +92,7 @@ export function RegistrationForm() {
 
       // 4. TRACKING GA4
       trackGA4Event("generate_lead_gay_games", {
-        package_type: selectedPackage,
+        // package_type: selectedPackage,
         experience_count: selectedExperiences.length,
         experiences: selectedExperiences.join(", "),
         location: "registration_form_footer",
@@ -122,7 +128,7 @@ export function RegistrationForm() {
         <p className="text-muted-foreground max-w-md mx-auto italic text-pretty">
           Your request for{" "}
           <strong className="text-foreground">
-            Package {selectedPackage.toUpperCase()}
+            Package {selectedExperiences}
           </strong>{" "}
           has been sent. Our local team will contact you shortly to finalize
           your Mediterranean experience.
@@ -284,46 +290,23 @@ export function RegistrationForm() {
               <Label className="text-muted block font-black text-xl uppercase italic">
                 2. Select Experiences
               </Label>
-              {selectedPackage && (
-                <span
-                  className={cn(
-                    "text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full transition-colors",
-                    selectedExperiences.length === currentLimit
-                      ? "bg-muted text-white"
-                      : "bg-primary/10 text-primary",
-                  )}
-                >
-                  {selectedExperiences.length} / {currentLimit} Selected
-                </span>
-              )}
+              <span className="text-xs font-black uppercase tracking-widest px-4 py-2 rounded-full bg-primary/10 text-primary">
+                {selectedExperiences.length} Selected
+              </span>
             </div>
-
-            {!selectedPackage && (
-              <div className="flex items-center gap-2 p-4 bg-primary/5 text-muted rounded-xl mb-4 text-sm font-medium border border-primary/10">
-                <AlertCircle size={18} />
-                Please select a package first to unlock the experiences.
-              </div>
-            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {experiences.map((exp) => {
                 const isSelected = selectedExperiences.includes(exp);
-                const isMaxed =
-                  selectedExperiences.length >= currentLimit && !isSelected;
                 return (
                   <div
                     key={exp}
                     onClick={() => handleToggle(exp)}
                     className={cn(
-                      "group flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 select-none",
-                      !selectedPackage
-                        ? "opacity-40 cursor-not-allowed"
-                        : "cursor-pointer",
+                      "group flex items-center gap-3 p-3 rounded-xl border transition-all duration-300 select-none cursor-pointer",
                       isSelected
                         ? "border-muted bg-muted/15 ring-1 ring-muted"
-                        : isMaxed
-                          ? "opacity-50 grayscale"
-                          : "bg-card border-muted hover:border-primary/50",
+                        : "bg-card border-muted hover:border-primary/50",
                     )}
                   >
                     <div
