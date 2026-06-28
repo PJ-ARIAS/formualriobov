@@ -208,11 +208,11 @@ export function RegistrationForm() {
             </div>
 
             {/* --- 2. Trip Details --- */}
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
                 2. Trip Details
               </h3>
-              {/* <div>
+              <div>
                 <Label>Preferred Package *</Label>
                 <Select
                   name="package_selection"
@@ -237,7 +237,7 @@ export function RegistrationForm() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </div> */}
+              </div>
               <div>
                 <Label>Number of Travelers *</Label>
                 <Select name="travelers" required>
@@ -275,14 +275,14 @@ export function RegistrationForm() {
                   className="mt-1.5 bg-card rounded-xl"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* --- 3. Experiences --- */}
           <div className="mb-8 p-6 bg-background/50 rounded-3xl border border-muted/50">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <Label className="text-muted block font-black text-xl uppercase italic">
-                3. Select Experiences
+                2. Select Experiences
               </Label>
               {selectedPackage && (
                 <span
