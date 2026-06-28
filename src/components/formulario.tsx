@@ -212,7 +212,7 @@ export function RegistrationForm() {
               <h3 className="font-black text-xl uppercase italic border-b border-muted pb-2 text-muted">
                 2. Trip Details
               </h3>
-              <div>
+              {/* <div>
                 <Label>Preferred Package *</Label>
                 <Select
                   name="package_selection"
@@ -237,7 +237,7 @@ export function RegistrationForm() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
               <div>
                 <Label>Number of Travelers *</Label>
                 <Select name="travelers" required>
